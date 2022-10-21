@@ -1,5 +1,9 @@
 package main
-import "fmt"
+
+import (
+    "fmt"
+    "time"
+)
 
 type Player struct {
 	// only positive health
@@ -7,8 +11,27 @@ type Player struct {
     Name string
     AttackPower uint
 }
-type  Game struct {
+type Game struct {
+	isRunning bool
+}
 
+func newGame() *Game {
+    return &Game{
+		isRunning: false,
+	}
+}
+func (g *Game) start() {
+	g.isRunning = true
+	g.gameLoop()
+}
+
+func (g *Game) gameLoop() {
+    interval1 := 1 * time.Second
+	for  {
+		fmt.Println("the game is running")
+		//
+		time.Sleep(interval1)
+    }
 }
 
 func  newPLayer(name string, hp uint, ap uint) *Player {
@@ -23,11 +46,16 @@ func (p *Player) dies()  {
 }
 
 func main() {
-   playerA := newPLayer("Bob", 100, 100)
-   playerB := newPLayer("Alice", 150, 100)
+	game := newGame()
+	game.start()
 
-	playerA.dies()
-	playerB.dies()
+	fmt.Println()
 
-    fmt.Println("The Health of the playerA equals to ", playerA.Health)
+   //playerA := newPLayer("Bob", 100, 100)
+   //playerB := newPLayer("Alice", 150, 100)
+
+	//playerB.dies()
+	//playerA.dies()
+
+//    fmt.Println("The Health of the playerA equals to ", playerA.Health)
 }
