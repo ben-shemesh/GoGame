@@ -13,8 +13,17 @@ type Player struct {
 }
 type Game struct {
 	isRunning bool
+	// the key is a string
+	// the value of a the map is a pointer to Player
+	players map[string]*Player
 }
+func (g *Game) addPlayer(p *Player){
+	// links to the map
+	// stores Player by its name
+	g.players[p.Name] = p
+	fmt.Println("adding new players")
 
+}
 func newGame() *Game {
     return &Game{
 		isRunning: false,
@@ -24,7 +33,6 @@ func (g *Game) start() {
 	g.isRunning = true
 	g.gameLoop()
 }
-
 func (g *Game) gameLoop() {
     interval1 := 1 * time.Second
 	for  {
@@ -34,12 +42,12 @@ func (g *Game) gameLoop() {
     }
 }
 
-func  newPLayer(name string, hp uint, ap uint) *Player {
+func  newPlayer(name string, hp uint, ap uint ) *Player {
 	return &Player{
 		Health: hp,
 		Name: name,
 		AttackPower: ap,
-	}
+		}
 }
 func (p *Player) dies()  {
 	p.Health = 0
@@ -47,15 +55,12 @@ func (p *Player) dies()  {
 
 func main() {
 	game := newGame()
-	game.start()
+	// move the start in a routine  / not correct usage but shows the point of Go routines
+	go game.start()
+	playerA := newPlayer("Bob", 100,100)
+	game.addPlayer(playerA)
 
-	fmt.Println()
 
-   //playerA := newPLayer("Bob", 100, 100)
-   //playerB := newPLayer("Alice", 150, 100)
+	fmt.Printf("%+v", game)
 
-	//playerB.dies()
-	//playerA.dies()
-
-//    fmt.Println("The Health of the playerA equals to ", playerA.Health)
 }
