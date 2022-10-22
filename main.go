@@ -110,5 +110,5 @@ func main() {
 	go displayThingsAfterFight(playerB)
 	game.start()
 	go addNewPlayer (game.PlayerCh)
-
+	// test 
 }
