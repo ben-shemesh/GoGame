@@ -38,21 +38,27 @@ func newGame() *Game {
 	}
 }
 
-func fightPLayers(p1 *Player, p2 *Player){
-//	 health1 := p1.Health
-//	 health2 := p2.Health
+func fightPlayers(p1 *Player, p2 *Player)  uint {
+	var deadPlayer
 	fmt.Printf("Alice health is equal to %d\n", p2.Health)
-	if p1.Health * 2< p2.Health {
+	if p1.Health * 2 < p2.Health {
 		p2.Health = p2.Health/ 2
 		fmt.Printf("%s has lost %d health.\n" ,p2.Name, p2.Health)
 		if p2.Health == 0 {
-		fmt.Printf("%s has died\n", p2.Name)
+			p2.dies()
+			fmt.Printf("%s has died\n", p2.Name)
+			deadPlayer = p2
 		}
-	}
-	fmt.Printf("%d", p2.Health)
+	} else  {
+			fmt.Printf("%s has lost %d health.\n" ,p1.Name, p1.Health)
+			if p1.Health == 0 {
+				p1.dies()
+				fmt.Printf("%s has died\n", p1.Name)
+				deadPlayer = p1
+			}
+		}
+	return deadPlayer
 }
-
-
 func (g *Game) start() {
 	g.isRunning = true
 	g.gameLoop()
