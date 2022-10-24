@@ -17,7 +17,9 @@ type Game struct {
     // this quite channel is of type bool meaning that when this is called/used then it must take a bool as an argument
     // needs to communicate with the game loop
     quitCh chan bool
+    // pauses thing loop
     pauseCh chan bool
+    addPlayerCh chan *Player
 
 }
 
@@ -47,8 +49,10 @@ func newGame() *Game {
         players: make(map[string]*Player),
         // channel are like pipes that go to to a particlar place/ used to communicate through Goroutines
         quitCh:  make(chan bool),
+        // add a player in the game as it is running
+        // must use go routines 
+        addPlayerCh: make(chan *Player),
     }
-    // need to add players
 }
 
 func (g *Game) gameLoop(){
@@ -57,12 +61,15 @@ func (g *Game) gameLoop(){
     // is basicall ran in another layer
         // each second (time.Second * 1) it will shoot off this ticker
     ticker := time.NewTicker(interval)
-    fmt.Println("the game is running")
 
     // THE RUNNING IS A NAME FOR THE THE FIRST SWITCH LOOP (ENDS HERE)
     running:
     for {
         select{
+            // if the g.addplayerCh is used then assign that player to that function
+        case player :=  <- g.addPlayerCh:
+            // and shoot out the results
+            g.addNewPlayer(player)
             // this basically means, if someone uses this g.quitCh in the game loop
         case <- g.quitCh:
             // it will stop the game loop
@@ -76,6 +83,7 @@ func (g *Game) gameLoop(){
             break
         }
     }
+    fmt.Println("The Game Has Stopped.")
 }
 func addNewPLayer(pN string, pA uint , pH uint  ) *Player {
     return &Player{
@@ -84,13 +92,7 @@ func addNewPLayer(pN string, pA uint , pH uint  ) *Player {
         Health: pH,
     }
 }
-func (p *Player) killPlayer(){
-	p.Health = 0
-}
 
-func (g *Game) quitGame(){
-    
-}
 func (p *Player) powerDepleter() {
     rand.Seed(time.Now().Unix())
     rando := rand.Intn(5)
@@ -113,14 +115,34 @@ func main (){
     game.addNewPlayer(&playerB)
     // creates a go function
     // a function that is put in a different layer, that will shoot off when needed
-
-    go game.quitGame()
-
+    go addThePlayer(game.addPlayerCh)
+    // not attached to game. Its its own function that will BE USED in the game (game := newGame())
+        // must be added before the function call you need it to shoot into
     game.start()
 
 }
-    
+    // it quites/is avaliable becasue it is connected to the Games quitCh chan
+    // as well as the for loop in the gameLoop function as a switch case ...
+    // {
+    // running:
+    // for {
+    //     select{
+    //         // this basically means, if someone uses this g.quitCh in the game loop
+    //   // ------> case <- g.quitCh: <-------- //
+    //         // it will stop the game loop
+    //             // THE RUNNING IS A NAME FOR THE THE FIRST SWITCH LOOP (ENDS HERE)
+    //         break running
+    //      }
+    //   }
 func quitGame(quitCh chan bool)  {
-    time.Sleep(time.Second * 3)
+    // will wait 3 seconds then ..
+    time.Sleep(time.Second * 3) //              ^
+    // ... ask for the channel   ---------------^
     quitCh <- true
+}
+
+func addThePlayer(addPlayerCh chan *Player){
+    time.Sleep(time.Second * 5)
+    player := addNewPLayer("Danny", 122, 9090)
+    addPlayerCh <- player 
 }
