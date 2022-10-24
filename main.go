@@ -22,16 +22,30 @@ func (g *Game) start(){
     g.isRunning = true
     g.gameLoop()
 }
+func(g *Game) addNewPlayer(p *Player){
+    // we tell the game (g *Game) give me the players map (g.players (in Game struct))
+    // we then store a player in the map using the string to identify the player
+    g.players[p.Name] = p
+    // prints out the format of newly created player
+    fmt.Printf("Adding new player %s %d\n ", p.Name, p.Health)
+}
+
+func newGame() *Game {
+    return &Game{
+        isRunning: true,
+        // will initlaize map as empty
+        players: make(map[string]*Player),
+    }
+    // need to add players
+}
 
 func (g *Game) gameLoop(){
     // is equal to 1 second occurance in program execuation
     interval := time.Second * 1
-    timer := time.NewTimer(interval)
     for {
-		fmt.Println("looping")
-		<- timer.C
-		timer.Reset(interval)
-	}
+        fmt.Println("the game is running")
+        time.Sleep(interval)
+    }
 }
 func addNewPLayer(pN string, pA uint , pH uint  ) *Player {
     return &Player{
@@ -44,11 +58,6 @@ func (p *Player) killPlayer(){
 	p.Health = 0
 }
 
-func newGame() *Game {
-    return &Game{
-        isRunning: true,
-    }
-}
 func (g *Game) quitGame(){
     
 }
@@ -65,17 +74,19 @@ func (p *Player) powerBooster(){
 
 func main (){
 
-
 game := newGame()
-go game.start()
-firstPLayer := addNewPLayer("Tony Balongi", 100, 100)
+playerA := Player{"tony", 122,1222}
+game.addNewPlayer(&playerA)
+game.start()
+
+// firstPLayer := addNewPlayer("Tony Balongi", 100, 100)
 // // killPlayer(firstPLayer)
 // // fmt.Println(firstPLayer)
 // secondPLayer := addNewPLayer("Gloria Turning", 122, 8348)
 
 
-fmt.Printf("The players name is %s the players attack power is %d and the players health is %d\n",
-             firstPLayer.Name, firstPLayer.AttackPower,firstPLayer.Health )
+// fmt.Printf("The players name is %s the players attack power is %d and the players health is %d\n",
+//              firstPLayer.Name, firstPLayer.AttackPower,firstPLayer.Health )
 // fmt.Printf("The players name is %s the players attack power is %d and the players health is %d\n",
 //              secondPLayer.Name, secondPLayer.AttackPower,secondPLayer.Health )
 }
