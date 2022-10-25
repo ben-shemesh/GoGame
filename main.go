@@ -20,6 +20,8 @@ type Game struct {
     // pauses thing loop
     pauseCh chan bool
     addPlayerCh chan *Player
+    //
+    playerAttCh chan *Player
 
 }
 
@@ -40,6 +42,10 @@ func(g *Game) addNewPlayer(p *Player){
     // prints out the format of newly created player
     fmt.Printf("\nAdding new player %s %d\n ", p.Name, p.Health)
 }
+func (g *Game) addRando() {
+    rando := string("random things")
+    fmt.Println(rando)
+}
 
 func newGame() *Game {
     return &Game{
@@ -52,6 +58,8 @@ func newGame() *Game {
         // add a player in the game as it is running
         // must use go routines 
         addPlayerCh: make(chan *Player),
+        playerAttCh: make(chan *Player),
+
     }
 }
 
@@ -70,6 +78,9 @@ func (g *Game) gameLoop(){
         case player :=  <- g.addPlayerCh:
             // and shoot out the results
             g.addNewPlayer(player)
+        case player :=  <- g.playerAttCh:
+            player = addNewPLayer("bob", 45,554)
+            powerDepleter(int(player.Health))
             // this basically means, if someone uses this g.quitCh in the game loop
         case <- g.quitCh:
             // it will stop the game loop
@@ -92,11 +103,34 @@ func addNewPLayer(pN string, pA uint , pH uint  ) *Player {
         Health: pH,
     }
 }
-
-func (p *Player) powerDepleter() {
+func randPlayer (p1 *Player, p2 *Player) *Player {
     rand.Seed(time.Now().Unix())
     rando := rand.Intn(5)
-    p.AttackPower = p.AttackPower / uint(rando)
+    if rando > 3 {
+        player1 := powerDepleter(int(p1.Health))
+        return &Player{
+            p1.Name,
+            player1.AttackPower,
+            p1.Health,
+        }
+        fmt.Println(player1)
+    } else {
+        player2 := powerDepleter(int(p2.Health))
+        return &Player{
+            p2.Name,
+            p2.AttackPower,
+            p2.Health,
+        }
+        fmt.Println(player2)
+    }
+}
+func powerDepleter(pH int) *Player {
+    rand.Seed(time.Now().Unix())
+    rando := rand.Intn(5)
+    pH = pH /rando
+    return &Player{
+        Health: uint(pH),
+    }
 }
 func (p *Player) powerBooster(){
     rand.Seed(time.Now().Unix())
@@ -108,14 +142,18 @@ func main (){
 
     game := newGame()
 
+
     playerA := Player{"tony", 122,1222}
     playerB := Player{"Anne", 422,122672}
+    
 
     game.addNewPlayer(&playerA)
     game.addNewPlayer(&playerB)
     // creates a go function
     // a function that is put in a different layer, that will shoot off when needed
     go addThePlayer(game.addPlayerCh)
+    go playerAttribute(game.playerAttCh)
+
     // not attached to game. Its its own function that will BE USED in the game (game := newGame())
         // must be added before the function call you need it to shoot into
     game.start()
@@ -139,6 +177,12 @@ func quitGame(quitCh chan bool)  {
     time.Sleep(time.Second * 3) //              ^
     // ... ask for the channel   ---------------^
     quitCh <- true
+}
+func playerAttribute(playerAttCh chan *Player){
+    time.Sleep(time.Second * 7)
+    player := addNewPLayer("Mark", 999, 666)
+    playerAttCh <- player
+
 }
 
 func addThePlayer(addPlayerCh chan *Player){
