@@ -40,7 +40,7 @@ func(g *Game) addNewPlayer(p *Player){
     // we then store a player in the map using the string to identify the player
     g.players[p.Name] = p
     // prints out the format of newly created player
-    fmt.Printf("\nAdding new player %s %d\n ", p.Name, p.Health)
+    fmt.Printf("\nAdding new player %s\n ", p.Name)
 }
 func (g *Game) addRando() {
     rando := string("random things")
@@ -78,9 +78,13 @@ func (g *Game) gameLoop(){
         case player :=  <- g.addPlayerCh:
             // and shoot out the results
             g.addNewPlayer(player)
+            // creates a new case that take a potential channel result and assigns it to player
+            // the player is created by invoking the addNew PLayer function
         case player :=  <- g.playerAttCh:
             player = addNewPLayer("bob", 45,554)
+            // player that was created in now used as an argument in the powerDepleted function
             powerDepleter(int(player.Health))
+            fmt.Printf("The new players Stats are Name: %s AttackPower: %d Health: %d\n", player.Name, player.AttackPower, player.Health)
             // this basically means, if someone uses this g.quitCh in the game loop
         case <- g.quitCh:
             // it will stop the game loop
@@ -107,44 +111,42 @@ func randPlayer (p1 *Player, p2 *Player) *Player {
     rand.Seed(time.Now().Unix())
     rando := rand.Intn(5)
     if rando > 3 {
-        player1 := powerDepleter(int(p1.Health))
+        powerDepleter(int(p1.Health))
         return &Player{
             p1.Name,
-            player1.AttackPower,
+            p1.AttackPower,
             p1.Health,
         }
-        fmt.Println(player1)
     } else {
-        player2 := powerDepleter(int(p2.Health))
+        powerDepleter(int(p2.Health))
         return &Player{
             p2.Name,
             p2.AttackPower,
             p2.Health,
         }
-        fmt.Println(player2)
     }
 }
 func powerDepleter(pH int) *Player {
     rand.Seed(time.Now().Unix())
     rando := rand.Intn(5)
-    pH = pH /rando
+    pH = pH + rando
     return &Player{
         Health: uint(pH),
     }
 }
-func (p *Player) powerBooster(){
+func powerBooter(p *Player) *Player{
     rand.Seed(time.Now().Unix())
     rando := rand.Intn(5)
     p.Health = p.Health * uint(rando)
 }
 
 func main (){
-
     game := newGame()
-
-
-    playerA := Player{"tony", 122,1222}
+    
+    
+    playerA := Player{"Tony", 122,1222}
     playerB := Player{"Anne", 422,122672}
+    randPlayer(&playerA,&playerB)
     
 
     game.addNewPlayer(&playerA)
@@ -159,7 +161,7 @@ func main (){
     game.start()
 
 }
-    // it quites/is avaliable becasue it is connected to the Games quitCh chan
+    // it quits is avaliable becasue it is connected to the Games quitCh chan
     // as well as the for loop in the gameLoop function as a switch case ...
     // {
     // running:
