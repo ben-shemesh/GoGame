@@ -107,25 +107,18 @@ func addNewPLayer(pN string, pA uint , pH uint  ) *Player {
         Health: pH,
     }
 }
-func randPlayer (p1 *Player, p2 *Player) *Player {
+func randPlayer(p1 *Player, p2 *Player) *Player {
     rand.Seed(time.Now().Unix())
-    rando := rand.Intn(5)
+    rando := rand.Intn(5) + 1
     if rando > 3 {
-        powerDepleter(int(p1.Health))
-        return &Player{
-            p1.Name,
-            p1.AttackPower,
-            p1.Health,
-        }
+        return p1
     } else {
-        powerDepleter(int(p2.Health))
-        return &Player{
-            p2.Name,
-            p2.AttackPower,
-            p2.Health,
-        }
+        return p2
     }
 }
+
+
+
 func powerDepleter(pH int) *Player {
     rand.Seed(time.Now().Unix())
     rando := rand.Intn(5) + 1
@@ -173,7 +166,7 @@ func main (){
     //         // this basically means, if someone uses this g.quitCh in the game loop
     //   // ------> case <- g.quitCh: <-------- //
     //         // it will stop the game loop
-    //             // THE RUNNING IS A NAME FOR THE THE FIRST SWITCH LOOP (ENDS HERE)
+    //             //  RUNNING IS A NAME FOR THE THE FIRST SWITCH LOOP (ENDS HERE)
     //         break running
     //      }
     //   }
@@ -187,11 +180,13 @@ func playerAttribute(playerAttCh chan *Player){
     time.Sleep(time.Second * 7)
     player := addNewPLayer("Mark", 999, 666)
     playerAttCh <- player
-
 }
 
 func addThePlayer(addPlayerCh chan *Player){
     time.Sleep(time.Second * 5)
     player := addNewPLayer("Danny", 122, 9090)
     addPlayerCh <- player 
+}
+func randomChoice(){
+    
 }
