@@ -82,9 +82,10 @@ func (g *Game) gameLoop(){
             // the player is created by invoking the addNew PLayer function
         case player :=  <- g.playerAttCh:
             player = addNewPLayer("bob", 45,554)
+            fmt.Printf("The players stats were:  Name: %s AttackPower: %d Health: %d\n", player.Name, player.AttackPower, player.Health)
             // player that was created in now used as an argument in the powerDepleted function
             powerBooster(player)
-            fmt.Printf("The new players Stats are Name: %s AttackPower: %d Health: %d\n", player.Name, player.AttackPower, player.Health)
+            fmt.Printf("The new players stats are now: Name: %s AttackPower: %d Health: %d\n", player.Name, player.AttackPower, player.Health)
             // this basically means, if someone uses this g.quitCh in the game loop
         case <- g.quitCh:
             // it will stop the game loop
@@ -109,15 +110,15 @@ func addNewPLayer(pN string, pA uint , pH uint  ) *Player {
 }
 func randPlayer(p1 *Player, p2 *Player) *Player {
     rand.Seed(time.Now().Unix())
-    rando := rand.Intn(5) + 1
+    rando := rand.Intn(10) + 1
     if rando > 3 {
+        fmt.Printf("%s %d %d\n",p1.Name,p1.AttackPower,p1.Health)
         return p1
     } else {
+        fmt.Printf("%s %d %d\n",p2.Name,p2.AttackPower,p2.Health)
         return p2
     }
 }
-
-
 
 func powerDepleter(pH int) *Player {
     rand.Seed(time.Now().Unix())
@@ -155,6 +156,8 @@ func main (){
     // not attached to game. Its its own function that will BE USED in the game (game := newGame())
         // must be added before the function call you need it to shoot into
     game.start()
+    go randPlayer(&playerA,&playerB)
+
 
 }
     // it quits is avaliable becasue it is connected to the Games quitCh chan
