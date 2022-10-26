@@ -83,7 +83,7 @@ func (g *Game) gameLoop(){
         case player :=  <- g.playerAttCh:
             player = addNewPLayer("bob", 45,554)
             // player that was created in now used as an argument in the powerDepleted function
-            powerDepleter(int(player.Health))
+            powerBooter(player)
             fmt.Printf("The new players Stats are Name: %s AttackPower: %d Health: %d\n", player.Name, player.AttackPower, player.Health)
             // this basically means, if someone uses this g.quitCh in the game loop
         case <- g.quitCh:
@@ -128,16 +128,19 @@ func randPlayer (p1 *Player, p2 *Player) *Player {
 }
 func powerDepleter(pH int) *Player {
     rand.Seed(time.Now().Unix())
-    rando := rand.Intn(5)
-    pH = pH + rando
+    rando := rand.Intn(5) + 1
+    pH = pH / rando
     return &Player{
         Health: uint(pH),
     }
 }
 func powerBooter(p *Player) *Player{
     rand.Seed(time.Now().Unix())
-    rando := rand.Intn(5)
+    rando := rand.Intn(5)+1
     p.Health = p.Health * uint(rando)
+    return &Player{
+        Health: p.Health,
+    }
 }
 
 func main (){
