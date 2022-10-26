@@ -120,12 +120,12 @@ func randPlayer(p1 *Player, p2 *Player) *Player {
     }
 }
 
-func powerDepleter(pH int) *Player {
+func powerDepleter(p *Player) *Player {
     rand.Seed(time.Now().Unix())
-    rando := rand.Intn(5) + 1
-    pH = pH / rando
+    rando := rand.Intn(5)+1
+    p.Health = p.Health / uint(rando)
     return &Player{
-        Health: uint(pH),
+        Health: p.Health,
     }
 }
 func powerBooster(p *Player) *Player{
